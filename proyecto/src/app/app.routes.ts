@@ -1,3 +1,9 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+const routeConfig: Routes = [
+
+    
+];
+
+
+export default routeConfig;
