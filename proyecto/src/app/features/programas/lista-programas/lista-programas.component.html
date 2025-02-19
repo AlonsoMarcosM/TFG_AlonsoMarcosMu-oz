@@ -1,0 +1,23 @@
+<h2>Gestión de Programas</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Nombre del Programa</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let programa of programas">
+      <td>{{ programa.nombre_programa }}</td>
+      <td>{{ programa["propósito"] }}
+    </td>
+      <td>
+        <!-- Botón para editar y eliminar -->
+        <button [routerLink]="['/programas/editar', programa.id]">Editar</button>
+        <button [routerLink]="['/programas/eliminar', programa.id]">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<a routerLink="/programas/agregar">Agregar nuevo programa</a>

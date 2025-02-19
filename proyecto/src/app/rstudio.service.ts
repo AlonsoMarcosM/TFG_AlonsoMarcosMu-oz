@@ -20,23 +20,4 @@ export class RstudioService {
     return this.http.get<any>(url);
   }
 
-  /**
-   * (Descomenta y utiliza según necesidad)
-   * Obtiene la lista de programas disponibles.
-   *
-   * getPrograms(): Observable<any[]> {
-   *   const url = `${this.apiUrl}/programas`;
-   *   return this.http.get<any[]>(url);
-   * }
-   */
-
-  /**
-   * (Descomenta y utiliza según necesidad)
-   * Ejecuta un programa dado su nombre.
-   *
-   * runProgram(programName: string): Observable<any> {
-   *   const url = `${this.apiUrl}/run/${programName}`;
-   *   return this.http.post<any>(url, {});
-   * }
-   */
 }

@@ -1,17 +1,11 @@
 import { Component } from '@angular/core';
-import { ProgramFormComponent } from './program-form.component';
+import { RouterOutlet, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ProgramFormComponent],
-  template: `
-    <h1>{{ title }}</h1>
-    <p>Gestionar programas</p>
-    <app-program-form></app-program-form>
-  `,
-  styleUrls: ['./app.component.css']
+  imports: [RouterOutlet, RouterModule],
+  template: `<router-outlet></router-outlet>`,
+  styleUrls: ['app.component.css']
 })
-export class AppComponent {
-  title = 'APPWEB';
-}
+export class AppComponent {}

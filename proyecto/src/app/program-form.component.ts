@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RstudioService } from './rstudio.service';
 
 @Component({
-  selector: 'app-program-form',
+  selector: 'homeprueba-program-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
