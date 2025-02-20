@@ -1,0 +1,20 @@
+<h2>Ejecutar Programa</h2>
+<div *ngIf="programa">
+  <h3>{{ programa.nombre_programa }}</h3>
+  <p>{{ programa["propósito"] }}</p>
+  <form (ngSubmit)="ejecutar()">
+    <div *ngFor="let param of parametros">
+      <label>{{ param }}:</label>
+      <input type="text" [(ngModel)]="valores[param]" name="{{param}}" placeholder="Valor por defecto">
+    </div>
+    <button type="button" (click)="verMetadatos()">Ver Metadatos</button>
+    <button type="submit">Ejecutar</button>
+    <button type="button" (click)="cerrar()">Cerrar</button>
+  </form>
+</div>
+
+<div *ngIf="resultado">
+  <h3>Resultado de la Ejecución</h3>
+  <pre>{{ resultado | json }}</pre>
+  <button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+</div>

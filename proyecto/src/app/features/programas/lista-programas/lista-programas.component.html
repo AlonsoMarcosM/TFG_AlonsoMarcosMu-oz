@@ -10,11 +10,10 @@
   <tbody>
     <tr *ngFor="let programa of programas">
       <td>{{ programa.nombre_programa }}</td>
-      <td>{{ programa["propósito"] }}
-    </td>
+      <td>{{ programa["propósito"] }}</td>
       <td>
-        <!-- Botón para editar y eliminar -->
-        <button [routerLink]="['/programas/editar', programa.id]">Editar</button>
+        <!-- Botón para ejecutar usando globalArray -->
+        <button [routerLink]="['/programas/ejecutar', (globalArray.isArray(programa.id) ? programa.id[0] : programa.id)]">Ejecutar</button>
         <button [routerLink]="['/programas/eliminar', programa.id]">Eliminar</button>
       </td>
     </tr>

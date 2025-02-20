@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ListaProgramasComponent implements OnInit {
   programas: any[] = [];
+  globalArray = Array; // Agrega esta línea
 
   constructor(private programasService: ProgramasService) {}
 
@@ -24,6 +25,5 @@ export class ListaProgramasComponent implements OnInit {
       this.programas = data;
     });
   }
-  
-  
 }
+
