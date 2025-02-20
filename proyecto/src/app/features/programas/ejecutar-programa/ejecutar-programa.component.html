@@ -3,9 +3,10 @@
   <h3>{{ programa.nombre_programa }}</h3>
   <p>{{ programa["propósito"] }}</p>
   <form (ngSubmit)="ejecutar()">
+    <!-- Se genera un campo por cada parámetro dinámico -->
     <div *ngFor="let param of parametros">
       <label>{{ param }}:</label>
-      <input type="text" [(ngModel)]="valores[param]" name="{{param}}" placeholder="Valor por defecto">
+      <input type="text" [(ngModel)]="valores[param]" name="{{param}}" placeholder="Ingrese valor">
     </div>
     <button type="button" (click)="verMetadatos()">Ver Metadatos</button>
     <button type="submit">Ejecutar</button>

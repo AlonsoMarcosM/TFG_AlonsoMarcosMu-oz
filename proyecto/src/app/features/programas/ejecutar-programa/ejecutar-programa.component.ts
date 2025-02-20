@@ -12,9 +12,9 @@ import { ProgramasService } from '../../../services/programas.service';
   styleUrls: ['./ejecutar-programa.component.css']
 })
 export class EjecutarProgramaComponent implements OnInit {
-  programa: any = null;
-  parametros: string[] = [];
-  valores: { [key: string]: any } = {};
+  programa: any = null;  // Datos del programa a ejecutar
+  parametros: string[] = [];  // Nombres de los parámetros (dinámico)
+  valores: { [key: string]: any } = {};  // Valores ingresados por el usuario
   resultado: any = null;
 
   constructor(
@@ -26,13 +26,12 @@ export class EjecutarProgramaComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      // Primero, intenta obtener el programa desde la caché
+      // Intentamos obtener el programa de la caché
       this.programa = this.programasService.getProgramaById(id);
       if (!this.programa) {
-        // Si no se encontró, llama a listarProgramas() para cargar la lista y actualizar la caché
+        // Si no está en la caché, cargamos la lista completa y buscamos el programa
         this.programasService.listarProgramas().subscribe(data => {
-          // Actualiza la caché internamente (si no lo haces en el servicio)
-          // Aquí asumimos que getProgramaById() buscará en la lista que acaba de cargar
+          // Aquí puedes actualizar la caché en el servicio si lo deseas
           this.programa = data.find(p => {
             if (Array.isArray(p.id)) {
               return p.id[0] === id;
@@ -50,12 +49,12 @@ export class EjecutarProgramaComponent implements OnInit {
       }
     }
   }
-  
+
   private inicializarParametros(): void {
-    // Asumimos que los parámetros están en la propiedad "parámetros"
+    // Asumimos que la propiedad "parámetros" contiene el array de nombres de parámetros
     this.parametros = this.programa["parámetros"] || [];
-    // Inicializamos los valores, puedes establecer valores por defecto si lo deseas
     this.parametros.forEach(param => {
+      // Puedes asignar valores por defecto si existen, o dejarlo vacío
       this.valores[param] = "";
     });
   }
@@ -65,6 +64,7 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   ejecutar(): void {
+    // Llamamos al método del servicio para ejecutar el programa
     this.programasService.ejecutarPrograma(this.programa.id, this.valores)
       .subscribe(data => {
         this.resultado = data;
@@ -74,6 +74,7 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   cerrar(): void {
+    // Navegar de regreso a la lista de programas
     this.router.navigate(['/programas']);
   }
 
