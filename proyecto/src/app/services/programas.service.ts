@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Programa } from '../models/programa.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +12,12 @@ export class ProgramasService {
 
   constructor(private http: HttpClient) {}
 
+  
   listarProgramas(): Observable<any[]> { 
-    const url = `${this.apiUrl}/programasinfo`;
-    return this.http.get<any[]>(url);
+    return this.http.get<any[]>(`${this.apiUrl}/programasinfo`);
+  }
+  refresh(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/refresh`, {});
   }
 
   ejecutarPrograma(id: string, parametros: any): Observable<any> {
@@ -25,6 +30,12 @@ export class ProgramasService {
     // Realizamos una petición GET con esos parámetros
     const url = `${this.apiUrl}/ejecutar`;
     return this.http.get<any>(url, { params });
+  }
+
+  // Método para eliminar un programa. Se usará DEL para llamar a /delete?filename=...
+  eliminarPrograma(filename: string): Observable<any> {
+    const url = `${this.apiUrl}/delete?filename=${encodeURIComponent(filename)}`;
+    return this.http.delete<any>(url);
   }
 
   // Método para obtener un programa de la caché (puedes adaptar según tu lógica)

@@ -3,6 +3,7 @@
   <thead>
     <tr>
       <th>Nombre del Programa</th>
+      <th>Nombre del archivo</th>
       <th>Descripción</th>
       <th>Acciones</th>
     </tr>
@@ -10,11 +11,12 @@
   <tbody>
     <tr *ngFor="let programa of programas">
       <td>{{ programa.nombre_programa }}</td>
+      <td>{{ programa.nombre_archivo }}</td>
       <td>{{ programa["propósito"] }}</td>
       <td>
-        <!-- Botón para ejecutar usando globalArray -->
-        <button [routerLink]="['/programas/ejecutar', (globalArray.isArray(programa.id) ? programa.id[0] : programa.id)]">Ejecutar</button>
-        <button [routerLink]="['/programas/eliminar', programa.id]">Eliminar</button>
+        <button [routerLink]="['/programas/ejecutar', (Array.isArray(programa.id) ? programa.id[0] : programa.id)]">Ejecutar</button>
+        <!-- Suponiendo que programa.id es el nombre del archivo -->
+        <button [routerLink]="['/programas/eliminar', (Array.isArray(programa.nombre_archivo) ? programa.nombre_archivo[0] : programa.nombre_archivo)]">Eliminar</button>
       </td>
     </tr>
   </tbody>

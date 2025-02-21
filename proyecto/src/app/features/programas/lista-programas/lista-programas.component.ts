@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ProgramasService } from '../../../services/programas.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
 
 @Component({
   selector: 'app-lista-programas',
@@ -12,7 +15,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ListaProgramasComponent implements OnInit {
   programas: any[] = [];
-  globalArray = Array; // Agrega esta línea
+  Array = Array; // Agrega esta línea
 
   constructor(private programasService: ProgramasService) {}
 
@@ -21,9 +24,12 @@ export class ListaProgramasComponent implements OnInit {
   }
 
   cargarProgramas(): void {
-    this.programasService.listarProgramas().subscribe(data => {
-      this.programas = data;
+    this.programasService.refresh().subscribe(() => {
+      this.programasService.listarProgramas().subscribe(data => {
+        this.programas = data;
+      });
     });
   }
+  
 }
 
