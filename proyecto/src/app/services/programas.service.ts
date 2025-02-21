@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Programa } from '../models/programa.model';
 
@@ -31,7 +31,17 @@ export class ProgramasService {
     const url = `${this.apiUrl}/ejecutar`;
     return this.http.get<any>(url, { params });
   }
-
+   // Método para subir archivo, usando POST y FormData.
+   uploadPrograma(file: File): Observable<HttpEvent<any>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const url = `${this.apiUrl}/upload`;
+    // Se configura para reportar el progreso y observar los eventos
+    return this.http.post<HttpEvent<any>>(url, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
+  }
   // Método para eliminar un programa. Se usará DEL para llamar a /delete?filename=...
   eliminarPrograma(filename: string): Observable<any> {
     const url = `${this.apiUrl}/delete?filename=${encodeURIComponent(filename)}`;

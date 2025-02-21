@@ -59,8 +59,11 @@ export class EjecutarProgramaComponent implements OnInit {
     });
   }
 
+   // Variable para mostrar/ocultar los metadatos
+  mostrarMetadatos: boolean = false;
+  // En lugar de alert, alterna la visibilidad de los metadatos
   verMetadatos(): void {
-    alert(JSON.stringify(this.programa, null, 2));
+    this.mostrarMetadatos = !this.mostrarMetadatos;
   }
 
   ejecutar(): void {

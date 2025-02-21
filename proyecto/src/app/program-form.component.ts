@@ -8,10 +8,11 @@ import { RstudioService } from './rstudio.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
+    <h1>Entorno de pruebas API Rest</h1>
     <h2>Enviar solicitud a RStudio Server</h2>
     <form [formGroup]="programForm" (ngSubmit)="onSubmit()">
-      <label for="programName">Nombre del programa:</label>
-      <input id="programName" formControlName="programName" placeholder="Ej: miPrograma">
+      <label for="programName">Host/</label>
+      <input id="programName" formControlName="programName" placeholder="ejecutar?programa=sumar2test&a=1&b=2">
       <button type="submit">Enviar</button>
     </form>
 

@@ -3,7 +3,6 @@
   <h3>{{ programa.nombre_programa }}</h3>
   <p>{{ programa["propósito"] }}</p>
   <form (ngSubmit)="ejecutar()">
-    <!-- Se genera un campo por cada parámetro dinámico -->
     <div *ngFor="let param of parametros">
       <label>{{ param }}:</label>
       <input type="text" [(ngModel)]="valores[param]" name="{{param}}" placeholder="Ingrese valor">
@@ -12,7 +11,44 @@
     <button type="submit">Ejecutar</button>
     <button type="button" (click)="cerrar()">Cerrar</button>
   </form>
-</div>
+  
+  <!-- Panel desplegable de metadatos -->
+  <div *ngIf="mostrarMetadatos" class="metadatos-panel">
+    <h4>Metadatos</h4>
+    <dl>
+      <dt>Mensaje</dt>
+      <dd>{{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</dd>
+      
+      <dt>Nombre del Programa</dt>
+      <dd>{{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</dd>
+      
+      <dt>Nombre del Archivo</dt>
+      <dd>{{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</dd>
+      
+      <dt>Parámetros</dt>
+      <dd>
+        {{ (programa['parámetros'] && programa['parámetros'].length > 0) 
+            ? programa['parámetros'].join(', ') 
+            : 'Ninguno' }}
+      </dd>
+      
+      <dt>Propósito</dt>
+      <dd>{{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</dd>
+      
+      <dt>Método</dt>
+      <dd>{{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</dd>
+      
+      <dt>Resultado Esperado</dt>
+      <dd>{{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</dd>
+      
+      <dt>Análisis del Resultado</dt>
+      <dd>{{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</dd>
+      
+      <dt>ID</dt>
+      <dd>{{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</dd>
+    </dl>
+  </div>
+  
 
 <div *ngIf="resultado">
   <h3>Resultado de la Ejecución</h3>

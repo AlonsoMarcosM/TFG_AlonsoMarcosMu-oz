@@ -1,0 +1,29 @@
+.metadatos-panel {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-top: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .metadatos-panel h4 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .metadatos-panel dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1rem;
+  }
+  
+  .metadatos-panel dt {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .metadatos-panel dd {
+    margin: 0;
+    color: #000;
+  }
+  

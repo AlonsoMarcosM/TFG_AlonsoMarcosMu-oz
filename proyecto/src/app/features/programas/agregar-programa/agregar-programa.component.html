@@ -1,1 +1,13 @@
-<p>agregar-programa works!</p>
+<h2>Agregar Nuevo Programa</h2>
+<div>
+  <input type="file" (change)="onFileSelected($event)">
+</div>
+<div *ngIf="uploadProgress > 0">
+  <p>Progreso: {{ uploadProgress }}%</p>
+</div>
+<div>
+  <button (click)="subirArchivo()">Subir Archivo</button>
+</div>
+<div *ngIf="mensaje">
+  <p>{{ mensaje }}</p>
+</div>
