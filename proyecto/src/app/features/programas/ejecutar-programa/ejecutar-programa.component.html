@@ -1,3 +1,4 @@
+
 <h2>Ejecutar Programa</h2>
 <div *ngIf="programa">
   <h3>{{ programa.nombre_programa }}</h3>
@@ -13,44 +14,80 @@
   </form>
   
   <!-- Panel desplegable de metadatos -->
-  <div *ngIf="mostrarMetadatos" class="metadatos-panel">
-    <h4>Metadatos</h4>
-    <dl>
-      <dt>Mensaje</dt>
-      <dd>{{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</dd>
-      
-      <dt>Nombre del Programa</dt>
-      <dd>{{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</dd>
-      
-      <dt>Nombre del Archivo</dt>
-      <dd>{{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</dd>
-      
-      <dt>Parámetros</dt>
-      <dd>
-        {{ (programa['parámetros'] && programa['parámetros'].length > 0) 
-            ? programa['parámetros'].join(', ') 
-            : 'Ninguno' }}
-      </dd>
-      
-      <dt>Propósito</dt>
-      <dd>{{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</dd>
-      
-      <dt>Método</dt>
-      <dd>{{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</dd>
-      
-      <dt>Resultado Esperado</dt>
-      <dd>{{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</dd>
-      
-      <dt>Análisis del Resultado</dt>
-      <dd>{{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</dd>
-      
-      <dt>ID</dt>
-      <dd>{{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</dd>
-    </dl>
-  </div>
-  
+<div *ngIf="mostrarMetadatos" class="metadatos-panel">
+  <h4>Metadatos</h4>
+  <dl>
+    <dt>Mensaje</dt>
+    <dd>{{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</dd>
+    
+    <dt>Nombre del Programa</dt>
+    <dd>{{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</dd>
+    
+    <dt>Nombre del Archivo</dt>
+    <dd>{{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</dd>
+    
+    <dt>Parámetros</dt>
+    <dd>
+      {{ (programa['parámetros'] && programa['parámetros'].length > 0) 
+          ? programa['parámetros'].join(', ') 
+          : 'Ninguno' }}
+    </dd>
+    
+    <dt>Propósito</dt>
+    <dd>{{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</dd>
+    
+    <dt>Método</dt>
+    <dd>{{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</dd>
+    
+    <dt>Resultado Esperado</dt>
+    <dd>{{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</dd>
+    
+    <dt>Análisis del Resultado</dt>
+    <dd>{{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</dd>
+    
+    <dt>ID</dt>
+    <dd>{{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</dd>
+    <dt>Tipo</dt>
+    <dd>{{ programa['tipo'] && programa['tipo'].length > 0 ? programa['tipo'][0] : '' }}</dd>
+  </dl>
+</div>
 
-<div *ngIf="resultado">
+
+<!-- Se muestra la imagen si existe -->
+<div *ngIf="imageUrl">
+  <h3>Resultado de la Ejecución</h3>
+  <img [src]="imageUrl" alt="Resultado del programa" style="max-width:100%;">
+  <button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+</div>
+
+<!-- Se muestra la tabla si existe -->
+<div *ngIf="tableResult">
+  <h3>Resultado de la Ejecución (Tabla)</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th *ngFor="let key of getTableHeaders(tableResult)">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of tableResult">
+        <td *ngFor="let key of getTableHeaders(tableResult)">{{ row[key] }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+</div>
+<!-- Se muestra una caja de resultado para mensajes (JSON) -->
+<div *ngIf="mensajeResultado">
+  <h3>Resultado de la Ejecución</h3>
+  <div class="resultado-caja">
+    <p>{{ mensajeResultado }}</p>
+  </div>
+  <button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+</div>
+
+<!-- Si no hay imagen, tabla ni mensaje pero hay otro resultado (texto) -->
+<div *ngIf="resultado && !imageUrl && !tableResult && !mensajeResultado">
   <h3>Resultado de la Ejecución</h3>
   <pre>{{ resultado | json }}</pre>
   <button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>

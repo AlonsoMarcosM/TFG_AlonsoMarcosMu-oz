@@ -12,10 +12,14 @@ import { ProgramasService } from '../../../services/programas.service';
   styleUrls: ['./ejecutar-programa.component.css']
 })
 export class EjecutarProgramaComponent implements OnInit {
-  programa: any = null;  // Datos del programa a ejecutar
-  parametros: string[] = [];  // Nombres de los parámetros (dinámico)
-  valores: { [key: string]: any } = {};  // Valores ingresados por el usuario
+  programa: any = null;
+  parametros: string[] = [];
+  valores: { [key: string]: any } = {};
   resultado: any = null;
+  imageUrl: string | null = null;
+  tableResult: any[] | null = null;
+  mensajeResultado: string | null = null;  // Nueva propiedad para el mensaje formateado
+  mostrarMetadatos: boolean = false;
 
   constructor(
     private programasService: ProgramasService,
@@ -26,12 +30,9 @@ export class EjecutarProgramaComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      // Intentamos obtener el programa de la caché
       this.programa = this.programasService.getProgramaById(id);
       if (!this.programa) {
-        // Si no está en la caché, cargamos la lista completa y buscamos el programa
         this.programasService.listarProgramas().subscribe(data => {
-          // Aquí puedes actualizar la caché en el servicio si lo deseas
           this.programa = data.find(p => {
             if (Array.isArray(p.id)) {
               return p.id[0] === id;
@@ -51,37 +52,81 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   private inicializarParametros(): void {
-    // Asumimos que la propiedad "parámetros" contiene el array de nombres de parámetros
-    this.parametros = this.programa["parámetros"] || [];
+    // Asegúrate de usar la notación de corchetes para propiedades con acentos
+    this.parametros = this.programa['parámetros'] || [];
     this.parametros.forEach(param => {
-      // Puedes asignar valores por defecto si existen, o dejarlo vacío
       this.valores[param] = "";
     });
   }
 
-   // Variable para mostrar/ocultar los metadatos
-  mostrarMetadatos: boolean = false;
-  // En lugar de alert, alterna la visibilidad de los metadatos
   verMetadatos(): void {
     this.mostrarMetadatos = !this.mostrarMetadatos;
   }
 
   ejecutar(): void {
-    // Llamamos al método del servicio para ejecutar el programa
-    this.programasService.ejecutarPrograma(this.programa.id, this.valores)
-      .subscribe(data => {
-        this.resultado = data;
-      }, error => {
-        console.error("Error al ejecutar el programa", error);
-      });
+    // Detecta el flag tipo del programa, si existe
+    const tipo = this.programa['tipo'] ? this.programa['tipo'][0] : undefined;
+    if (tipo === 'table') {
+      this.programasService.ejecutarProgramaTable(this.programa.id, this.valores)
+        .subscribe(data => {
+          this.tableResult = data;
+          this.imageUrl = null;
+          this.resultado = null;
+          this.mensajeResultado = null;
+        }, error => {
+          console.error("Error al ejecutar el programa tipo table", error);
+        });
+    } else {
+      // Por defecto se asume que se debe obtener una imagen o un JSON con mensaje
+      this.programasService.ejecutarPrograma(this.programa.id, this.valores)
+        .subscribe(blob => {
+          console.log('Respuesta blob:', blob);
+          if (blob.type.startsWith('image/')) {
+            this.imageUrl = URL.createObjectURL(blob);
+            this.resultado = null;
+            this.tableResult = null;
+            this.mensajeResultado = null;
+          } else {
+            // Procesar como JSON
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const jsonResult = JSON.parse(reader.result as string);
+                // Si existe la propiedad "mensaje", extraerla
+                if (jsonResult.mensaje && jsonResult.mensaje.length > 0) {
+                  this.mensajeResultado = jsonResult.mensaje[0];
+                } else {
+                  this.mensajeResultado = reader.result as string;
+                }
+                this.resultado = null;
+              } catch (e) {
+                this.resultado = reader.result;
+                this.mensajeResultado = null;
+              }
+            };
+            reader.readAsText(blob);
+            this.imageUrl = null;
+            this.tableResult = null;
+          }
+        }, error => {
+          console.error("Error al ejecutar el programa", error);
+        });
+    }
   }
 
   cerrar(): void {
-    // Navegar de regreso a la lista de programas
     this.router.navigate(['/programas']);
   }
 
   cerrarResultado(): void {
     this.resultado = null;
+    this.imageUrl = null;
+    this.tableResult = null;
+    this.mensajeResultado = null;
+  }
+
+  // Método auxiliar para obtener cabeceras de una tabla, si es necesario
+  getTableHeaders(data: any[]): string[] {
+    return data && data.length ? Object.keys(data[0]) : [];
   }
 }

@@ -19,7 +19,16 @@ export class ProgramasService {
   refresh(): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/refresh`, {});
   }
-
+  ejecutarProgramaTable(id: string, parametros: any): Observable<any> {
+    let params = new HttpParams().set('programa', id);
+    Object.keys(parametros).forEach(key => {
+      params = params.set(key, parametros[key]);
+    });
+    const url = `${this.apiUrl}/ejecutar`;
+    // Se asume que para tipo "table" la respuesta es JSON (por defecto)
+    return this.http.get<any>(url, { params });
+  }
+  
   ejecutarPrograma(id: string, parametros: any): Observable<any> {
     // Empezamos configurando el parámetro 'programa'
     let params = new HttpParams().set('programa', id);
@@ -29,7 +38,7 @@ export class ProgramasService {
     });
     // Realizamos una petición GET con esos parámetros
     const url = `${this.apiUrl}/ejecutar`;
-    return this.http.get<any>(url, { params });
+    return this.http.get(url, { params, responseType: 'blob' });
   }
    // Método para subir archivo, usando POST y FormData.
    uploadPrograma(file: File): Observable<HttpEvent<any>> {
