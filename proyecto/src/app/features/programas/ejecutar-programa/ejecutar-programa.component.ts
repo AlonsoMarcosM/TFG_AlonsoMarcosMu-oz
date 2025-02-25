@@ -3,11 +3,26 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProgramasService } from '../../../services/programas.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-ejecutar-programa',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatTableModule
+  ],
   templateUrl: './ejecutar-programa.component.html',
   styleUrls: ['./ejecutar-programa.component.css']
 })
@@ -18,8 +33,9 @@ export class EjecutarProgramaComponent implements OnInit {
   resultado: any = null;
   imageUrl: string | null = null;
   tableResult: any[] | null = null;
-  mensajeResultado: string | null = null;  // Nueva propiedad para el mensaje formateado
+  mensajeResultado: string | null = null;  // Mensaje de resultado (éxito o error)
   mostrarMetadatos: boolean = false;
+  esError: boolean = false; // Indica si ocurrió un error según la respuesta HTTP
 
   constructor(
     private programasService: ProgramasService,
@@ -52,7 +68,6 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   private inicializarParametros(): void {
-    // Asegúrate de usar la notación de corchetes para propiedades con acentos
     this.parametros = this.programa['parámetros'] || [];
     this.parametros.forEach(param => {
       this.valores[param] = "";
@@ -64,44 +79,59 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   ejecutar(): void {
-    // Detecta el flag tipo del programa, si existe
-    const tipo = this.programa['tipo'] ? this.programa['tipo'][0] : undefined;
-    if (tipo === 'table') {
+    // Reiniciamos el flag de error en cada ejecución
+    this.esError = false;
+    if (this.programa['tipo'] && this.programa['tipo'][0] === 'table') {
       this.programasService.ejecutarProgramaTable(this.programa.id, this.valores)
         .subscribe(data => {
-          this.tableResult = data;
+          if (data && data.status && Array.isArray(data.status) && data.status[0].toLowerCase() === 'error') {
+            this.mensajeResultado = (Array.isArray(data.message) ? data.message[0] : data.message) + " Revise los metadatos";
+            this.esError = true;
+            this.tableResult = null;
+          } else {
+            this.tableResult = data;
+            this.mensajeResultado = null;
+            this.esError = false;
+          }
           this.imageUrl = null;
           this.resultado = null;
-          this.mensajeResultado = null;
         }, error => {
           console.error("Error al ejecutar el programa tipo table", error);
+          this.procesarError(error);
         });
     } else {
-      // Por defecto se asume que se debe obtener una imagen o un JSON con mensaje
       this.programasService.ejecutarPrograma(this.programa.id, this.valores)
         .subscribe(blob => {
-          console.log('Respuesta blob:', blob);
           if (blob.type.startsWith('image/')) {
             this.imageUrl = URL.createObjectURL(blob);
             this.resultado = null;
             this.tableResult = null;
             this.mensajeResultado = null;
+            this.esError = false;
           } else {
-            // Procesar como JSON
             const reader = new FileReader();
             reader.onload = () => {
               try {
                 const jsonResult = JSON.parse(reader.result as string);
-                // Si existe la propiedad "mensaje", extraerla
-                if (jsonResult.mensaje && jsonResult.mensaje.length > 0) {
-                  this.mensajeResultado = jsonResult.mensaje[0];
+                if (jsonResult.status && Array.isArray(jsonResult.status) && 
+                    jsonResult.status[0].toLowerCase() === 'error') {
+                  this.mensajeResultado = (Array.isArray(jsonResult.message) ? jsonResult.message[0] : jsonResult.message) + " Revise los metadatos";
+                  this.esError = true;
                 } else {
-                  this.mensajeResultado = reader.result as string;
+                  this.mensajeResultado = (jsonResult.mensaje && jsonResult.mensaje.length > 0)
+                                            ? jsonResult.mensaje[0] : '';
+                  this.esError = false;
                 }
                 this.resultado = null;
               } catch (e) {
-                this.resultado = reader.result;
-                this.mensajeResultado = null;
+                this.mensajeResultado = reader.result as string;
+                this.esError = this.mensajeResultado.toLowerCase().includes("error") ||
+                               this.mensajeResultado.toLowerCase().includes("na");
+                // Agregar el mensaje adicional si se detecta error
+                if(this.esError && !this.mensajeResultado.toLowerCase().includes("revise los metadatos")) {
+                  this.mensajeResultado += " Revise los metadatos";
+                }
+                this.resultado = null;
               }
             };
             reader.readAsText(blob);
@@ -110,8 +140,18 @@ export class EjecutarProgramaComponent implements OnInit {
           }
         }, error => {
           console.error("Error al ejecutar el programa", error);
+          this.procesarError(error);
         });
     }
+  }
+
+  private procesarError(error: any): void {
+    if (error.error && typeof error.error === 'string') {
+      this.mensajeResultado = error.error + " Revise los metadatos";
+    } else {
+      this.mensajeResultado = 'Programa no ejecutado, revise los datos de entrada Revise los metadatos';
+    }
+    this.esError = true;
   }
 
   cerrar(): void {
@@ -123,9 +163,9 @@ export class EjecutarProgramaComponent implements OnInit {
     this.imageUrl = null;
     this.tableResult = null;
     this.mensajeResultado = null;
+    this.esError = false;
   }
 
-  // Método auxiliar para obtener cabeceras de una tabla, si es necesario
   getTableHeaders(data: any[]): string[] {
     return data && data.length ? Object.keys(data[0]) : [];
   }
