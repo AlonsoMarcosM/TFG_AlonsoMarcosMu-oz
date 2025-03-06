@@ -1,10 +1,14 @@
-import { provideRouter, RouterModule, Routes } from '@angular/router';
-import { ListaProgramasComponent } from './features/programas/lista-programas/lista-programas.component';
-import { EjecutarProgramaComponent } from './features/programas/ejecutar-programa/ejecutar-programa.component';
-import { HomeComponent } from './home/home.component';
+import { Routes } from '@angular/router';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { AuthGuard } from './auth.guard'; // Asegúrate de implementarlo
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'programas', loadChildren: () => import('./features/programas/programas.module').then(m => m.ProgramasModule) }
-  
+  { path: '', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { 
+    path: 'programas', 
+    loadChildren: () => import('./features/programas/programas.module').then(m => m.ProgramasModule),
+    canActivate: [AuthGuard]
+  }
 ];

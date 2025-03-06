@@ -1,63 +1,57 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Programa } from '../models/programa.model';
-
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProgramasService {
-  private apiUrl = '/api';  // URL base de tu backend
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
+  // Método auxiliar para construir la URL completa con el puerto dinámico
+  private getDynamicUrl(path: string): string {
+    return `http://localhost:${this.authService.getDynamicPort()}${path}`;
+  }
   
   listarProgramas(): Observable<any[]> { 
-    return this.http.get<any[]>(`${this.apiUrl}/programasinfo`);
+    return this.http.get<any[]>(this.getDynamicUrl('/programasinfo'));
   }
+  
   refresh(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/refresh`, {});
+    return this.http.post<any>(this.getDynamicUrl('/refresh'), {});
   }
+  
   ejecutarProgramaTable(id: string, parametros: any): Observable<any> {
     let params = new HttpParams().set('programa', id);
     Object.keys(parametros).forEach(key => {
       params = params.set(key, parametros[key]);
     });
-    const url = `${this.apiUrl}/ejecutar`;
-    // Se asume que para tipo "table" la respuesta es JSON (por defecto)
-    return this.http.get<any>(url, { params });
+    return this.http.get<any>(this.getDynamicUrl('/ejecutar'), { params });
   }
   
   ejecutarPrograma(id: string, parametros: any): Observable<any> {
-    // Empezamos configurando el parámetro 'programa'
     let params = new HttpParams().set('programa', id);
-    // Agregamos dinámicamente cada parámetro
     Object.keys(parametros).forEach(key => {
       params = params.set(key, parametros[key]);
     });
-    // Realizamos una petición GET con esos parámetros
-    const url = `${this.apiUrl}/ejecutar`;
-    return this.http.get(url, { params, responseType: 'blob' });
+    return this.http.get(this.getDynamicUrl('/ejecutar'), { params, responseType: 'blob' });
   }
-   // Método para subir archivo, usando POST y FormData.
-   uploadPrograma(file: File): Observable<HttpEvent<any>> {
+  
+  uploadPrograma(file: File): Observable<HttpEvent<any>> {
     const formData = new FormData();
     formData.append('file', file);
-    const url = `${this.apiUrl}/upload`;
-    // Se configura para reportar el progreso y observar los eventos
-    return this.http.post<HttpEvent<any>>(url, formData, {
+    return this.http.post<HttpEvent<any>>(this.getDynamicUrl('/upload'), formData, {
       reportProgress: true,
       observe: 'events'
     });
   }
-  // Método para eliminar un programa. Se usará DEL para llamar a /delete?filename=...
+  
   eliminarPrograma(filename: string): Observable<any> {
-    const url = `${this.apiUrl}/delete?filename=${encodeURIComponent(filename)}`;
-    return this.http.delete<any>(url);
+    return this.http.delete<any>(`${this.getDynamicUrl('/delete')}?filename=${encodeURIComponent(filename)}`);
   }
-
-  // Método para obtener un programa de la caché (puedes adaptar según tu lógica)
+  
   private programasCache: any[] = [];
   getProgramaById(id: string): any {
     return this.programasCache && this.programasCache.find(p => {
