@@ -4,35 +4,105 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule
+  ],
   template: `
-    <h2>Registrar Nuevo Usuario</h2>
-    <form (ngSubmit)="register()">
-      <label>Usuario:
-        <input type="text" [(ngModel)]="usuario" name="usuario" required>
-      </label>
-      <br>
-      <label>Contraseña:
-        <input type="password" [(ngModel)]="contrasena" name="contrasena" required>
-      </label>
-      <br>
-      <label>
-        <input type="checkbox" [(ngModel)]="esAdmin" name="esAdmin">
-        Registrar como Administrador
-      </label>
-      <br>
-      <button type="submit">Registrar</button>
-    </form>
-    <p *ngIf="mensaje">{{ mensaje }}</p>
-    <button (click)="volver()">Volver a Log In</button>
+    <div class="register-container">
+      <mat-card class="register-card custom-shadow">
+        <mat-card-header class="header-container">
+          <div class="header-content">
+            <mat-card-title class="register-title">Registrar Nuevo Usuario</mat-card-title>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          <form (ngSubmit)="register()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Usuario</mat-label>
+              <input matInput [(ngModel)]="usuario" name="usuario" required>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Contraseña</mat-label>
+              <input matInput [(ngModel)]="contrasena" name="contrasena" type="password" required>
+            </mat-form-field>
+            <mat-checkbox [(ngModel)]="esAdmin" name="esAdmin">Registrar como Administrador</mat-checkbox>
+            <div class="button-container">
+              <button mat-raised-button color="primary" type="submit">Registrar</button>
+            </div>
+          </form>
+          <p class="message" *ngIf="mensaje">{{ mensaje }}</p>
+          <div class="button-container">
+            <button mat-button (click)="volver()">Volver a Log In</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   `,
   styles: [`
-    h2 { color: #333; }
-    form { margin-bottom: 1rem; }
-    label { display: block; margin: 0.5rem 0; }
+    .register-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #f0f0f0, #dcdcdc);
+    }
+    .register-card {
+      width: 400px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    }
+    .custom-shadow {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+    }
+    .header-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 0;
+      margin: 0;
+      width: 100%;
+      background-color: transparent;
+    }
+    .header-content {
+      width: 100%;
+      text-align: center;
+    }
+    .register-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .full-width {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: green;
+    }
   `]
 })
 export class RegisterComponent {

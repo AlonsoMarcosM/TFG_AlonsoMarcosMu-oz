@@ -1,43 +1,35 @@
-.metadatos-panel {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-top: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-  }
-  
-  .metadatos-panel h4 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  .metadatos-panel dl {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.5rem 1rem;
-  }
-  
-  .metadatos-panel dt {
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .metadatos-panel dd {
-    margin: 0;
-    color: #000;
-  }
-  .resultado-caja {
-    border: 1px solid #4CAF50;
-    background-color: #e8f5e9;
-    padding: 1rem;
-    margin-top: 1rem;
-    border-radius: 4px;
-    color: #2e7d32;
-    font-size: 1.2rem;
-  }
-  .error-message {
-    color: red;
-    border: 1px solid red;
-    background-color: #ffe6e6;
-  }
-  
+.execution-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+/* Columna izquierda: formulario, parámetros y metadatos */
+.left-panel {
+  flex: 1;
+  max-width: 60%;
+}
+
+/* Columna derecha: resultados */
+.right-panel {
+  flex: 1;
+  max-width: 40%;
+  align-self: flex-start;
+}
+
+/* Opcional: ajustar la visualización de las secciones de resultados */
+.result-section {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Estilos para el botón de cerrar resultado */
+.result-close {
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+/* Si tienes estilos previos para .resultado-caja y .error-message, se mantendrán */

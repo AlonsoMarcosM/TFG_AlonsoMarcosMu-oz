@@ -3,93 +3,92 @@
     <mat-card-title>Ejecutar Programa</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div *ngIf="programa">
-      <h3>{{ programa.nombre_programa }}</h3>
-      <p>{{ programa["propósito"] }}</p>
-      <form (ngSubmit)="ejecutar()">
-        <div *ngFor="let param of parametros">
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>{{ param }}</mat-label>
-            <input matInput [(ngModel)]="valores[param]" name="{{param}}" placeholder="Ingrese valor">
-          </mat-form-field>
-        </div>
-        <div class="button-group" style="margin-top: 1rem;">
-          <button mat-raised-button type="button" color="accent" (click)="verMetadatos()">Ver Metadatos</button>
-          <button mat-raised-button type="submit" color="primary">Ejecutar</button>
-          <button mat-raised-button type="button" color="warn" (click)="cerrar()">Cerrar</button>
-        </div>
-      </form>
-
-      <!-- Panel desplegable de metadatos usando mat-expansion-panel -->
-      <mat-accordion *ngIf="mostrarMetadatos" style="margin-top: 1rem;">
-        <mat-expansion-panel [expanded]="true" hideToggle>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Metadatos
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="metadata">
-            <p><strong>Mensaje:</strong> {{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</p>
-            <p><strong>Nombre del Programa:</strong> {{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</p>
-            <p><strong>Nombre del Archivo:</strong> {{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</p>
-            <p><strong>Parámetros:</strong> {{ (programa['parámetros'] && programa['parámetros'].length > 0) ? programa['parámetros'].join(', ') : 'Ninguno' }}</p>
-            <p><strong>Propósito:</strong> {{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</p>
-            <p><strong>Método:</strong> {{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</p>
-            <p><strong>Resultado Esperado:</strong> {{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</p>
-            <p><strong>Análisis del Resultado:</strong> {{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</p>
-            <p><strong>ID:</strong> {{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</p>
-            <p><strong>Tipo:</strong> {{ programa['tipo'] && programa['tipo'].length > 0 ? programa['tipo'][0] : '' }}</p>
+    <div *ngIf="programa" class="execution-container">
+      <!-- Columna izquierda: Parámetros, botones y metadatos -->
+      <div class="left-panel">
+        <h3>{{ programa.nombre_programa }}</h3>
+        <p>{{ programa["propósito"] }}</p>
+        <form (ngSubmit)="ejecutar()">
+          <div *ngFor="let param of parametros">
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>{{ param }}</mat-label>
+              <input matInput [(ngModel)]="valores[param]" name="{{param}}" placeholder="Ingrese valor">
+            </mat-form-field>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-      
-      <!-- Resultado: Imagen -->
-      <div *ngIf="imageUrl" class="result-section" style="margin-top: 1rem;">
-        <h3>Resultado de la Ejecución</h3>
-        <img [src]="imageUrl" alt="Resultado del programa" style="max-width:100%;">
-        <div style="margin-top: 0.5rem;">
-          <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+          <div class="button-group">
+            <button mat-raised-button type="button" color="accent" (click)="verMetadatos()">Ver Metadatos</button>
+            <button mat-raised-button type="submit" color="primary">Ejecutar</button>
+            <button mat-raised-button type="button" color="warn" (click)="cerrar()">Cerrar</button>
+          </div>
+        </form>
+        <!-- Panel de metadatos (opcional) -->
+        <mat-accordion *ngIf="mostrarMetadatos" class="metadatos-panel">
+          <mat-expansion-panel [expanded]="true" hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Metadatos</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="metadata">
+              <p><strong>Mensaje:</strong> {{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</p>
+              <p><strong>Nombre del Programa:</strong> {{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</p>
+              <p><strong>Nombre del Archivo:</strong> {{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</p>
+              <p><strong>Parámetros:</strong> {{ (programa['parámetros'] && programa['parámetros'].length > 0) ? programa['parámetros'].join(', ') : 'Ninguno' }}</p>
+              <p><strong>Propósito:</strong> {{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</p>
+              <p><strong>Método:</strong> {{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</p>
+              <p><strong>Resultado Esperado:</strong> {{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</p>
+              <p><strong>Análisis del Resultado:</strong> {{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</p>
+              <p><strong>ID:</strong> {{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</p>
+              <p><strong>Tipo:</strong> {{ programa['tipo'] && programa['tipo'].length > 0 ? programa['tipo'][0] : '' }}</p>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+
+      <!-- Columna derecha: Resultados -->
+      <div class="right-panel" *ngIf="imageUrl || tableResult || mensajeResultado || resultado">
+        <!-- Resultado: Imagen -->
+        <div *ngIf="imageUrl" class="result-section">
+          <h3>Resultado de la Ejecución</h3>
+          <img [src]="imageUrl" alt="Resultado del programa" style="max-width: 100%;">
+          <div class="result-close">
+            <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+          </div>
+        </div>
+        <!-- Resultado: Tabla -->
+        <div *ngIf="tableResult" class="result-section">
+          <h3>Resultado de la Ejecución (Tabla)</h3>
+          <table mat-table [dataSource]="tableResult" class="mat-elevation-z8 full-width-table">
+            <ng-container *ngFor="let column of getTableHeaders(tableResult)" [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
+              <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="getTableHeaders(tableResult)"></tr>
+            <tr mat-row *matRowDef="let row; columns: getTableHeaders(tableResult)"></tr>
+          </table>
+          <div class="result-close">
+            <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+          </div>
+        </div>
+        <!-- Resultado: Mensaje (JSON o error) -->
+        <div *ngIf="mensajeResultado" class="result-section">
+          <h3>Resultado de la Ejecución</h3>
+          <mat-card class="resultado-caja" [ngClass]="{'error-message': esError}">
+            <mat-card-content>
+              <p>{{ mensajeResultado }}</p>
+            </mat-card-content>
+          </mat-card>
+          <div class="result-close">
+            <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+          </div>
+        </div>
+        <!-- Resultado: Otro texto -->
+        <div *ngIf="resultado && !imageUrl && !tableResult && !mensajeResultado" class="result-section">
+          <h3>Resultado de la Ejecución</h3>
+          <pre>{{ resultado | json }}</pre>
+          <div class="result-close">
+            <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
+          </div>
         </div>
       </div>
-      
-      <!-- Resultado: Tabla -->
-      <div *ngIf="tableResult" class="result-section" style="margin-top: 1rem;">
-        <h3>Resultado de la Ejecución (Tabla)</h3>
-        <table mat-table [dataSource]="tableResult" class="mat-elevation-z8 full-width-table">
-          <ng-container *ngFor="let column of getTableHeaders(tableResult)" [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
-            <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="getTableHeaders(tableResult)"></tr>
-          <tr mat-row *matRowDef="let row; columns: getTableHeaders(tableResult)"></tr>
-        </table>
-        <div style="margin-top: 0.5rem;">
-          <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
-        </div>
-      </div>
-      
-      <!-- Resultado: Mensaje (JSON o error) -->
-      <div *ngIf="mensajeResultado" class="result-section" style="margin-top: 1rem;">
-        <h3>Resultado de la Ejecución</h3>
-        <mat-card class="resultado-caja" [ngClass]="{'error-message': esError}">
-          <mat-card-content>
-            <p>{{ mensajeResultado }}</p>
-          </mat-card-content>
-        </mat-card>
-        <div style="margin-top: 0.5rem;">
-          <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
-        </div>
-      </div>
-      
-      <!-- Resultado: Otro texto -->
-      <div *ngIf="resultado && !imageUrl && !tableResult && !mensajeResultado" class="result-section" style="margin-top: 1rem;">
-        <h3>Resultado de la Ejecución</h3>
-        <pre>{{ resultado | json }}</pre>
-        <div style="margin-top: 0.5rem;">
-          <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
-        </div>
-      </div>
-      
     </div>
   </mat-card-content>
 </mat-card>
