@@ -29,6 +29,7 @@ import { MatTableModule } from '@angular/material/table';
 export class EjecutarProgramaComponent implements OnInit {
   programa: any = null;
   parametros: string[] = [];
+  // 'valores' contendrá los datos ingresados por el usuario
   valores: { [key: string]: any } = {};
   resultado: any = null;
   imageUrl: string | null = null;
@@ -69,9 +70,19 @@ export class EjecutarProgramaComponent implements OnInit {
 
   private inicializarParametros(): void {
     this.parametros = this.programa['parámetros'] || [];
-    this.parametros.forEach(param => {
-      this.valores[param] = "";
-    });
+    // Se utiliza 'defaults' (sin acentos) para mostrar la sugerencia en el placeholder.
+    // Si 'prefill' es true se asigna al modelo; de lo contrario se deja vacío.
+    const prefill = this.programa.prefill || false;
+    if (this.programa.defaults) {
+      this.parametros.forEach(param => {
+        // Como los valores en defaults vienen como arreglo, usamos el primer elemento
+        this.valores[param] = prefill && this.programa.defaults[param] ? this.programa.defaults[param][0] : "";
+      });
+    } else {
+      this.parametros.forEach(param => {
+        this.valores[param] = "";
+      });
+    }
   }
 
   verMetadatos(): void {
@@ -79,13 +90,12 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   ejecutar(): void {
-    // Reiniciamos el flag de error en cada ejecución
     this.esError = false;
     if (this.programa['tipo'] && this.programa['tipo'][0] === 'table') {
       this.programasService.ejecutarProgramaTable(this.programa.id, this.valores)
         .subscribe(data => {
           if (data && data.status && Array.isArray(data.status) && data.status[0].toLowerCase() === 'error') {
-            this.mensajeResultado = (Array.isArray(data.message) ? data.message[0] : data.message) + " Revise los metadatos";
+            this.mensajeResultado = (Array.isArray(data.message) ? data.message[0] : data.message) + "\nRevise los metadatos";
             this.esError = true;
             this.tableResult = null;
           } else {
@@ -113,23 +123,34 @@ export class EjecutarProgramaComponent implements OnInit {
             reader.onload = () => {
               try {
                 const jsonResult = JSON.parse(reader.result as string);
-                if (jsonResult.status && Array.isArray(jsonResult.status) && 
-                    jsonResult.status[0].toLowerCase() === 'error') {
-                  this.mensajeResultado = (Array.isArray(jsonResult.message) ? jsonResult.message[0] : jsonResult.message) + " Revise los metadatos";
+                if (jsonResult.resultados) {
+                  this.mensajeResultado = (jsonResult.mensaje && jsonResult.mensaje.length > 0)
+                                            ? jsonResult.mensaje[0] : 'Estadísticas calculadas';
+                  this.mensajeResultado += "\nRevise los metadatos";
+                  this.resultado = jsonResult.resultados;
+                  if (this.resultado && Object.values(this.resultado).some(val => Array.isArray(val) ? val[0] === "NA" : val === "NA")) {
+                    this.esError = true;
+                  } else {
+                    this.esError = false;
+                  }
+                } else if (jsonResult.status && Array.isArray(jsonResult.status) &&
+                           jsonResult.status[0].toLowerCase() === 'error') {
+                  this.mensajeResultado = (Array.isArray(jsonResult.message) ? jsonResult.message[0] : jsonResult.message)
+                                          + "\nRevise los metadatos";
                   this.esError = true;
+                  this.resultado = null;
                 } else {
                   this.mensajeResultado = (jsonResult.mensaje && jsonResult.mensaje.length > 0)
                                             ? jsonResult.mensaje[0] : '';
                   this.esError = false;
+                  this.resultado = null;
                 }
-                this.resultado = null;
               } catch (e) {
                 this.mensajeResultado = reader.result as string;
                 this.esError = this.mensajeResultado.toLowerCase().includes("error") ||
                                this.mensajeResultado.toLowerCase().includes("na");
-                // Agregar el mensaje adicional si se detecta error
-                if(this.esError && !this.mensajeResultado.toLowerCase().includes("revise los metadatos")) {
-                  this.mensajeResultado += " Revise los metadatos";
+                if (this.esError && !this.mensajeResultado.toLowerCase().includes("revise los metadatos")) {
+                  this.mensajeResultado += "\nRevise los metadatos";
                 }
                 this.resultado = null;
               }
@@ -147,9 +168,9 @@ export class EjecutarProgramaComponent implements OnInit {
 
   private procesarError(error: any): void {
     if (error.error && typeof error.error === 'string') {
-      this.mensajeResultado = error.error + " Revise los metadatos";
+      this.mensajeResultado = error.error + "\nRevise los metadatos";
     } else {
-      this.mensajeResultado = 'Programa no ejecutado, revise los datos de entrada Revise los metadatos';
+      this.mensajeResultado = 'Programa no ejecutado, revise los datos de entrada\nRevise los metadatos';
     }
     this.esError = true;
   }
@@ -168,5 +189,13 @@ export class EjecutarProgramaComponent implements OnInit {
 
   getTableHeaders(data: any[]): string[] {
     return data && data.length ? Object.keys(data[0]) : [];
+  }
+
+  getResultKeys(): string[] {
+    return this.resultado ? Object.keys(this.resultado) : [];
+  }
+
+  getParamKeys(): string[] {
+    return this.valores ? Object.keys(this.valores) : [];
   }
 }

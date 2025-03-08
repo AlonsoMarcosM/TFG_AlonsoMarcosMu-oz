@@ -3,16 +3,26 @@
     <mat-card-title>Ejecutar Programa</mat-card-title>
   </mat-card-header>
   <mat-card-content>
+    <!-- Bloque de depuración (puedes eliminarlo después de verificar la metadata) -->
+    
+    
     <div *ngIf="programa" class="execution-container">
-      <!-- Columna izquierda: Parámetros, botones y metadatos -->
+      <!-- Columna izquierda: Formulario y metadatos -->
       <div class="left-panel">
-        <h3>{{ programa.nombre_programa }}</h3>
-        <p>{{ programa["propósito"] }}</p>
+        <h3>{{ programa['nombre_programa']?.[0] || '' }}</h3>
+        <p>{{ programa['propósito']?.[0] || '' }}</p>
         <form (ngSubmit)="ejecutar()">
           <div *ngFor="let param of parametros">
             <mat-form-field appearance="fill" class="full-width">
               <mat-label>{{ param }}</mat-label>
-              <input matInput [(ngModel)]="valores[param]" name="{{param}}" placeholder="Ingrese valor">
+              <!-- Se utiliza la propiedad defaults para el placeholder -->
+              <input
+                  matInput
+                  [(ngModel)]="valores[param]"
+                  name="{{param}}"
+                  [placeholder]="(programa.defaults && programa.defaults[param] && programa.defaults[param][0])
+                    ? programa.defaults[param][0]
+                    : param"> 
             </mat-form-field>
           </div>
           <div class="button-group">
@@ -28,16 +38,25 @@
               <mat-panel-title>Metadatos</mat-panel-title>
             </mat-expansion-panel-header>
             <div class="metadata">
-              <p><strong>Mensaje:</strong> {{ programa['mensaje'] && programa['mensaje'].length > 0 ? programa['mensaje'][0] : '' }}</p>
-              <p><strong>Nombre del Programa:</strong> {{ programa['nombre_programa'] && programa['nombre_programa'].length > 0 ? programa['nombre_programa'][0] : '' }}</p>
-              <p><strong>Nombre del Archivo:</strong> {{ programa['nombre_archivo'] && programa['nombre_archivo'].length > 0 ? programa['nombre_archivo'][0] : '' }}</p>
-              <p><strong>Parámetros:</strong> {{ (programa['parámetros'] && programa['parámetros'].length > 0) ? programa['parámetros'].join(', ') : 'Ninguno' }}</p>
-              <p><strong>Propósito:</strong> {{ programa['propósito'] && programa['propósito'].length > 0 ? programa['propósito'][0] : '' }}</p>
-              <p><strong>Método:</strong> {{ programa['método'] && programa['método'].length > 0 ? programa['método'][0] : '' }}</p>
-              <p><strong>Resultado Esperado:</strong> {{ programa['resultado_esperado'] && programa['resultado_esperado'].length > 0 ? programa['resultado_esperado'][0] : '' }}</p>
-              <p><strong>Análisis del Resultado:</strong> {{ programa['análisis_resultado'] && programa['análisis_resultado'].length > 0 ? programa['análisis_resultado'][0] : '' }}</p>
-              <p><strong>ID:</strong> {{ programa['id'] && programa['id'].length > 0 ? programa['id'][0] : '' }}</p>
-              <p><strong>Tipo:</strong> {{ programa['tipo'] && programa['tipo'].length > 0 ? programa['tipo'][0] : '' }}</p>
+              <p><strong>Mensaje:</strong> {{ programa['mensaje']?.[0] || '' }}</p>
+              <p><strong>Nombre del Programa:</strong> {{ programa['nombre_programa']?.[0] || '' }}</p>
+              <p><strong>Nombre del Archivo:</strong> {{ programa['nombre_archivo']?.[0] || '' }}</p>
+              <p>
+                <strong>Parámetros:</strong>
+                {{ programa['parámetros']?.join(', ') || 'Ninguno' }}
+              </p>
+              <p><strong>Propósito:</strong> {{ programa['propósito']?.[0] || '' }}</p>
+              <p><strong>Método:</strong> {{ programa['método']?.[0] || '' }}</p>
+              <p>
+                <strong>Resultado Esperado:</strong>
+                {{ programa['resultado_esperado']?.[0] || '' }}
+              </p>
+              <p>
+                <strong>Análisis del Resultado:</strong>
+                {{ programa['análisis_resultado']?.[0] || '' }}
+              </p>
+              <p><strong>ID:</strong> {{ programa['id']?.[0] || '' }}</p>
+              <p><strong>Tipo:</strong> {{ programa['tipo']?.[0] || '' }}</p>
             </div>
           </mat-expansion-panel>
         </mat-accordion>
@@ -53,7 +72,7 @@
             <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
           </div>
         </div>
-        <!-- Resultado: Tabla -->
+        <!-- Resultado: Tabla (para respuestas tabulares) -->
         <div *ngIf="tableResult" class="result-section">
           <h3>Resultado de la Ejecución (Tabla)</h3>
           <table mat-table [dataSource]="tableResult" class="mat-elevation-z8 full-width-table">
@@ -68,22 +87,36 @@
             <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
           </div>
         </div>
-        <!-- Resultado: Mensaje (JSON o error) -->
-        <div *ngIf="mensajeResultado" class="result-section">
+        <!-- Resultado: Mensaje, parámetros usados y resultados en tabla -->
+        <div *ngIf="mensajeResultado || resultado" class="result-section">
           <h3>Resultado de la Ejecución</h3>
           <mat-card class="resultado-caja" [ngClass]="{'error-message': esError}">
             <mat-card-content>
-              <p>{{ mensajeResultado }}</p>
+              <p style="white-space: pre-line;">{{ mensajeResultado }}</p>
+              <div *ngIf="getParamKeys().length > 0">
+                <h4>Parámetros usados</h4>
+                <table class="param-table">
+                  <tr *ngFor="let key of getParamKeys()">
+                    <td class="param-field">{{ key }}</td>
+                    <td class="param-value">{{ valores[key] }}</td>
+                  </tr>
+                </table>
+              </div>
+              <div *ngIf="resultado">
+                <h4>Resultados</h4>
+                <table class="result-table">
+                  <tr *ngFor="let key of getResultKeys()">
+                    <td class="result-field">{{ key }}</td>
+                    <td class="result-value">
+                      {{ (resultado[key] && resultado[key].length === 1)
+                        ? resultado[key][0]
+                        : (resultado[key] | json) }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </mat-card-content>
           </mat-card>
-          <div class="result-close">
-            <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
-          </div>
-        </div>
-        <!-- Resultado: Otro texto -->
-        <div *ngIf="resultado && !imageUrl && !tableResult && !mensajeResultado" class="result-section">
-          <h3>Resultado de la Ejecución</h3>
-          <pre>{{ resultado | json }}</pre>
           <div class="result-close">
             <button mat-raised-button type="button" (click)="cerrarResultado()">Cerrar Resultado</button>
           </div>
