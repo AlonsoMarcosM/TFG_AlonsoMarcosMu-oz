@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-title>Agregar Nuevo Programa</mat-card-title>
+  <mat-card-content>
+    <!-- Input de archivo oculto activado por botón -->
+    <input #fileInput type="file" hidden (change)="onFileSelected($event)">
+    <div>
+      <button mat-raised-button color="primary" (click)="fileInput.click()">Seleccionar Archivo</button>
+      <span *ngIf="selectedFile" style="margin-left: 1rem;">{{ selectedFile.name }}</span>
+    </div>
+
+    <!-- Progress bar para visualizar la subida -->
+    <div *ngIf="uploadProgress > 0" style="margin-top: 1rem;">
+      <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+      <p>Progreso: {{ uploadProgress }}%</p>
+    </div>
+
+    <div style="margin-top: 1rem;">
+      <button mat-raised-button color="accent" (click)="subirArchivo()">Subir Archivo</button>
+    </div>
+
+    <div *ngIf="mensaje" style="margin-top: 1rem;">
+      <p>{{ mensaje }}</p>
+    </div>
+  </mat-card-content>
+</mat-card>

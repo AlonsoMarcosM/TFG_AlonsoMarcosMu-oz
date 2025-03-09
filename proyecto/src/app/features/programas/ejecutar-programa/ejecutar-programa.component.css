@@ -1,0 +1,90 @@
+.execution-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+/* Columna izquierda: formulario, parámetros y metadatos */
+.left-panel {
+  flex: 1;
+  max-width: 60%;
+}
+
+/* Columna derecha: resultados */
+.right-panel {
+  flex: 1;
+  max-width: 40%;
+  align-self: flex-start;
+}
+
+/* Secciones de resultados */
+.result-section {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Botón para cerrar resultado */
+.result-close {
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+/* Caja de resultado: estado correcto */
+.resultado-caja {
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: #dff0d8; /* verde pálido */
+  border: 1px solid #3c763d; /* borde verde */
+  margin-bottom: 1rem;
+}
+
+/* Caja de resultado: estado error */
+.error-message {
+  background-color: #f2dede; /* rojo pálido */
+  border: 1px solid #a94442; /* borde rojo */
+}
+
+/* Se interpretan los saltos de línea en el mensaje */
+.resultado-caja p {
+  white-space: pre-line;
+}
+
+/* Estilos para la tabla de resultados */
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  
+}
+
+.result-table td,
+.result-table th {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.result-field {
+  font-weight: bold;
+  background-color: #f2f2f2;
+}
+
+/* Estilos para la tabla de parámetros usados */
+.param-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.param-table td,
+.param-table th {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.param-field {
+  font-weight: bold;
+  background-color: #f2f2f2;
+}
