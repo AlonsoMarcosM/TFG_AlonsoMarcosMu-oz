@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProgramasService } from '../../../services/programas.service';
+import { ProgramasService } from '../../../core/services/programas.service';
 
 @Component({
   selector: 'app-eliminar-programa',

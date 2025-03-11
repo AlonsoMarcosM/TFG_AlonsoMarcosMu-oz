@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { ProgramFormComponent } from '../program-form.component';
 import { RouterOutlet, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ProgramFormComponent, RouterOutlet, RouterModule],
+  imports: [ RouterOutlet, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

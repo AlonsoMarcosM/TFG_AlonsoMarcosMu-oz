@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinnerModule
   ],
   template: `
     <div class="register-container">
@@ -32,7 +34,13 @@ import { MatButtonModule } from '@angular/material/button';
           </div>
         </mat-card-header>
         <mat-card-content>
-          <form (ngSubmit)="register()">
+          <!-- Spinner mientras se realiza el registro -->
+          <div *ngIf="loading" class="spinner-container">
+            <mat-spinner></mat-spinner>
+            <p>Cargando...</p>
+          </div>
+          <!-- Formulario solo se muestra si no se está cargando -->
+          <form *ngIf="!loading" (ngSubmit)="register()">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Usuario</mat-label>
               <input matInput [(ngModel)]="usuario" name="usuario" required>
@@ -103,6 +111,13 @@ import { MatButtonModule } from '@angular/material/button';
       margin-top: 1rem;
       color: green;
     }
+    .spinner-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 150px;
+    }
   `]
 })
 export class RegisterComponent {
@@ -110,22 +125,27 @@ export class RegisterComponent {
   contrasena: string = '';
   esAdmin: boolean = false;
   mensaje: string = '';
+  loading: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   register(): void {
+    this.loading = true;
     this.authService.register(this.usuario, this.contrasena, this.esAdmin).subscribe(response => {
       if (response.status && response.status[0] === 'success') {
         this.mensaje = response.message ? response.message[0] : 'Usuario creado exitosamente.';
+        this.loading = false;
         setTimeout(() => {
           this.router.navigate(['/']);
         }, 2000);
       } else {
         this.mensaje = 'Error al registrar el usuario.';
+        this.loading = false;
       }
     }, error => {
       console.error('Error en registro:', error);
       this.mensaje = 'Error al registrar el usuario.';
+      this.loading = false;
     });
   }
 

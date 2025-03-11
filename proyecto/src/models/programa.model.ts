@@ -3,9 +3,9 @@ export interface Programa {
   mensaje: string;
   nombre_programa: string;
   nombre_archivo: string;
-  parámetros: string[];
-  propósito: string;
-  método: string;
+  parametros: string[];
+  proposito: string;
+  metodo: string;
   resultado_esperado: string;
-  análisis_resultado: string;
+  analisis_resultado: string;
 }
