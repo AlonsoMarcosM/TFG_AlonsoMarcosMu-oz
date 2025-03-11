@@ -5,7 +5,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProgramasService } from '../../../services/programas.service';
-import { switchMap } from 'rxjs/operators';
+import { throwError, timer } from 'rxjs';
+import { retryWhen, mergeMap, switchMap } from 'rxjs/operators';
 import { DeleteSuccessDialogComponent } from '../eliminar-programa/delete-success-dialog.component'; // Ajusta la ruta según tu estructura
 
 @Component({
@@ -16,7 +17,7 @@ import { DeleteSuccessDialogComponent } from '../eliminar-programa/delete-succes
   styleUrls: ['./lista-programas.component.css']
 })
 export class ListaProgramasComponent {
-  displayedColumns: string[] = ['nombre_programa', 'nombre_archivo', 'propósito', 'acciones'];
+  displayedColumns: string[] = ['nombre_programa', 'nombre_archivo', 'proposito', 'acciones'];
   dataSource: any[] = [];
 
   constructor(private programasService: ProgramasService, private dialog: MatDialog) {
@@ -25,6 +26,18 @@ export class ListaProgramasComponent {
 
   cargarProgramas(): void {
     this.programasService.refresh().pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          // Se reintenta hasta 3 veces con un delay de 1 segundo entre cada intento
+          mergeMap((error, index) => {
+            if (index < 3) {
+              return timer(1000);
+            } else {
+              return throwError(error);
+            }
+          })
+        )
+      ),
       switchMap(() => this.programasService.listarProgramas())
     ).subscribe(
       data => {

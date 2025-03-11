@@ -69,7 +69,7 @@ export class EjecutarProgramaComponent implements OnInit {
   }
 
   private inicializarParametros(): void {
-    this.parametros = this.programa['parámetros'] || [];
+    this.parametros = this.programa['parametros'] || [];
     // Se utiliza 'defaults' (sin acentos) para mostrar la sugerencia en el placeholder.
     // Si 'prefill' es true se asigna al modelo; de lo contrario se deja vacío.
     const prefill = this.programa.prefill || false;

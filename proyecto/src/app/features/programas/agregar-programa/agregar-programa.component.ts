@@ -61,4 +61,7 @@ export class AgregarProgramaComponent {
       }
     );
   }
+  cerrar(): void {
+    this.router.navigate(['/programas']);
+  }
 }

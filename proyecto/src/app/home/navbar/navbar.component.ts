@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -14,10 +15,10 @@ import { AuthService } from '../../auth/auth.service';
   template: `
     <mat-toolbar class="dark-toolbar">
       <!-- Logo clickeable -->
-      <a routerLink="/" class="logo">
-        <img src="favicon.ico" alt="Logo TFG" height="40">
+      
+      <a routerLink="/" class="dark-toolbar" class="logo" >
+        <img (click)="logout()"src="favicon.ico" alt="Logo TFG" height="40">
       </a>
-
       <!-- Botones de navegación -->
       <div class="nav-buttons">
         <button mat-button routerLink="/programas" routerLinkActive="active-link">
@@ -34,7 +35,7 @@ import { AuthService } from '../../auth/auth.service';
       <!-- Información del usuario y menú -->
       <div *ngIf="isLoggedIn(); else noUser" class="user-info">
         <span class="username">{{ currentUser }}</span>
-        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <button mat-icon-button class="user-menu-button" [matMenuTriggerFor]="userMenu">
           <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #userMenu="matMenu">
@@ -47,10 +48,29 @@ import { AuthService } from '../../auth/auth.service';
     </mat-toolbar>
   `,
   styles: [`
+            
     .dark-toolbar {
       background-color: #1a1a1a;
       color: #fff;
     }
+    .user-menu-button {
+      width: 40px;  /* Tamaño fijo del círculo */
+      height: 40px;
+      border: 2px solid rgba(255, 235, 59, 0.8); /* Rebordo sutil */
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .user-menu-button mat-icon {
+      font-size: 25px;  /* Ajusta este valor para que el ícono llene el círculo */
+      
+    }
+
     .logo {
       display: flex;
       align-items: center;
@@ -97,8 +117,10 @@ export class NavbarComponent {
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
+  private dynamicPort: number = environment.apiDefaultPort;
 
   logout(): void {
+    this.dynamicPort= environment.apiDefaultPort;
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/']);
     });
