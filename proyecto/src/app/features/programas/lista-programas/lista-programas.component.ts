@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ProgramasService } from '../../../services/programas.service';
+import { ProgramasService } from '../../../core/services/programas.service';
 import { throwError, timer } from 'rxjs';
 import { retryWhen, mergeMap, switchMap } from 'rxjs/operators';
 import { DeleteSuccessDialogComponent } from '../eliminar-programa/delete-success-dialog.component'; // Ajusta la ruta según tu estructura
