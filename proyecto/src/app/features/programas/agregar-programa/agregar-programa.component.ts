@@ -15,7 +15,7 @@ import { UploadSuccessDialogComponent } from './upload-success-dialog.component'
   standalone: true,
   imports: [CommonModule, FormsModule, MatCardModule, MatButtonModule, MatProgressBarModule, MatDialogModule],
   templateUrl: './agregar-programa.component.html',
-  styleUrls: ['./agregar-programa.component.css']
+  styleUrls: []
 })
 export class AgregarProgramaComponent {
   selectedFile: File | null = null;

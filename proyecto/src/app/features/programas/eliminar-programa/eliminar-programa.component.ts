@@ -12,7 +12,7 @@ import { ProgramasService } from '../../../core/services/programas.service';
     <p *ngIf="mensaje">{{ mensaje }}</p>
     <button (click)="volver()">Volver</button>
   `,
-  styleUrls: ['./eliminar-programa.component.css']
+  styleUrls: []
 })
 export class EliminarProgramaComponent implements OnInit {
   mensaje: string = '';
