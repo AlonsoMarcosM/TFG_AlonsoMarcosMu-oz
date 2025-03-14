@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: myapi-backend
+    ports:
+      - "7617:7617"
+      - "7618-7679:7618-7679"
+      - "7681-7700:7681-7700"
+    environment:
+      - ENV=production
+    networks:
+      - tfg-network
+
+  frontend:
+    build: ./frontend
+    container_name: angular-frontend
+    ports:
+      - "4200:4200"
+    networks:
+      - tfg-network
+
+networks:
+  tfg-network:
+    driver: bridge
