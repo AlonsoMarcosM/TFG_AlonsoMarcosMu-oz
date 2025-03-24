@@ -1,4 +1,4 @@
-// tfg-docker-project\frontend\proyecto\src\environments\environment.ts
+
 export const environment = {
     production: false,
     apiHost: 'localhost',      // Para desarrollo, usamos localhost

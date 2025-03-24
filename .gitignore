@@ -3,12 +3,7 @@
 /frontend/dist
 /frontend/tmp
 /frontend/out-tsc
-
-# Ignorar archivos temporales de R y backend
-/backend/.Rproj.user/
-/backend/.Rhistory
-/backend/.RData
-/backend/.Ruserdata
+/frontend/.angular
 
 # Archivos de sistema
 .DS_Store
