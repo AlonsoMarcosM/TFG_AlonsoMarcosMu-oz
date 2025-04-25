@@ -4,6 +4,11 @@
 /frontend/tmp
 /frontend/out-tsc
 /frontend/.angular
+/proyecto/node_modules
+/proyecto/dist
+/proyecto/tmp
+/proyecto/out-tsc
+/proyecto/.angular
 # Archivos de sistema
 .DS_Store
 Thumbs.db
