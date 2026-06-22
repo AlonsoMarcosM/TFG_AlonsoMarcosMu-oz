@@ -1,7 +1,6 @@
-
 export const environment = {
-  production: false,
-  demoMode: false,
+  production: true,
+  demoMode: true,
   apiHost: 'localhost',
   apiDefaultPort: 7617,
 };
