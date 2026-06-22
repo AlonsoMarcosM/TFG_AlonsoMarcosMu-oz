@@ -16,7 +16,7 @@
     "provider": "github-pages",
     "mode": "static-mock",
     "source_branch": "main",
-    "status": "prepared",
+    "status": "live",
     "url": "https://alonsomarcosm.github.io/TFG_AlonsoMarcosMu-oz/"
   }
 }
