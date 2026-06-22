@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "repository": "AlonsoMarcosM/TFG_AlonsoMarcosMu-oz",
+  "repository_url": "https://github.com/AlonsoMarcosM/TFG_AlonsoMarcosMu-oz",
+  "title": {
+    "es": "Ejecución remota de programas R",
+    "en": "Remote R Program Execution"
+  },
+  "summary": {
+    "es": "Frontend Angular para gestionar y ejecutar programas R mediante una API Plumber.",
+    "en": "Angular frontend to manage and execute R programs through a Plumber API."
+  },
+  "technologies": ["Angular", "TypeScript", "RxJS", "R", "Plumber", "Docker"],
+  "deployment": {
+    "type": "interactive",
+    "provider": "github-pages",
+    "mode": "static-mock",
+    "source_branch": "main",
+    "status": "prepared",
+    "url": "https://alonsomarcosm.github.io/TFG_AlonsoMarcosMu-oz/"
+  }
+}

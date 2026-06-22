@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +33,9 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
         </mat-card-header>
         <mat-card-content>
+          <p class="demo-note" *ngIf="demoMode">
+            Publicación de portfolio: las credenciales están precargadas y todas las operaciones son simuladas.
+          </p>
           <form (ngSubmit)="login()">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Usuario</mat-label>
@@ -112,11 +116,18 @@ import { MatIconModule } from '@angular/material/icon';
       color: #3f51b5;
       font-weight: bold;
     }
+    .demo-note {
+      color: #284b63;
+      background: #e9f5ff;
+      border-left: 4px solid #1976d2;
+      padding: 0.75rem;
+    }
   `]
 })
 export class LoginComponent {
-  usuario: string = '';
-  contrasena: string = '';
+  readonly demoMode = environment.demoMode;
+  usuario: string = environment.demoMode ? 'demo-admin' : '';
+  contrasena: string = environment.demoMode ? 'portfolio' : '';
   errorMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
