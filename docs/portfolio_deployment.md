@@ -20,4 +20,4 @@ URL prevista: `https://alonsomarcosm.github.io/TFG_AlonsoMarcosMu-oz/`.
 
 Login, registro, subida, borrado y ejecución son interacciones simuladas. La finalidad es enseñar la interfaz y el contrato funcional, no ofrecer ejecución remota pública.
 
-Última verificación local: 2026-06-22.
+Última verificación pública: 2026-06-22, respuesta HTTP 200 y workflow completo.
